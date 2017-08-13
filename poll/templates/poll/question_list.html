@@ -4,7 +4,7 @@
 
 <table  border="5">
 
-<th>Questions</th> 
+<th>{{object}}Questions</th> 
 {% for query in queryset %}
 	
   	<tr>
@@ -18,5 +18,8 @@
 
 {% endfor %}
 </table>
+
+<center><li><a href = "{% url 'poll:create_question' object.id %}">CREATE A NEW Question In this Category</a></center>
+
 
 </center>
