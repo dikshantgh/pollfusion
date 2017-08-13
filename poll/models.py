@@ -17,6 +17,7 @@ class Question(models.Model):
 	question_type = models.ForeignKey(QuestionType)
 	question_text = models.CharField(max_length=200)
 	pub_date = models.DateTimeField(default=datetime.now)
+	hit_ques = models.IntegerField(default =0)
 
 	def __str__(self):
 

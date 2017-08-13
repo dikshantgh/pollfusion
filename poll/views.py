@@ -38,7 +38,13 @@ class QuestionDetailView(DetailView):
         context = super(QuestionDetailView, self).get_context_data(**kwargs)
         ques_id = self.kwargs['pk']
         context['page']=Question.objects.get(id =ques_id)
+        page =  Question.objects.get(id =ques_id)
+        page.hit_ques = page.hit_ques + 1
+        context['view'] = page.hit_ques
+        page.save()
         return context
+    
+
     
 
 class TypeCreateView(CreateView):
