@@ -1,0 +1,19 @@
+<html>
+
+<center><strong>POLL APP</strong><br>
+
+
+<table  border="5">
+<th><center>QUESTION TOPICS</center></th>
+{% for type in object_list %}
+	<tr>
+
+	<td><a href = "{% url 'poll:question_list' type.id  %}">{{type.topic}}</a></td>
+
+	</tr>
+{%  endfor %}
+
+
+</table>
+</center>
+<html>

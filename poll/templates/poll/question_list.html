@@ -1,0 +1,22 @@
+<center>
+<center><a href ="{% url  'poll:main_page' %}">Home</a></center>
+
+
+<table  border="5">
+
+<th>Questions</th> 
+{% for query in queryset %}
+	
+  	<tr>
+
+ 	{% if query.question_type == object %}
+		<td><a href = "{% url 'poll:question_detail' query.id  %}">{{query.question_text}}</a></td>
+   
+ 	</tr>
+	{% endif %}
+
+
+{% endfor %}
+</table>
+
+</center>
