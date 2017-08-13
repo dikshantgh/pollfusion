@@ -1,0 +1,30 @@
+
+
+<center><a href ="{% url  'poll:main_page' %}">Home</a></center>
+
+
+<html>
+ <h3>Add New Option To this Question:</h3>
+<form action=''  method='POST'>
+{% csrf_token %}
+{% for field in form %}
+  <div>
+      <span>{{ field.errors }}</span>
+ 
+  <label>{{ field.label_tag }}</label>
+  </div>
+  <div>
+      {{ field }}
+
+  </div>
+
+{% endfor %}
+
+
+    <div>
+      <button type="submit">Save</button>
+    </div>
+  </div>
+</form>
+</html>
+
