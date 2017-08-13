@@ -9,7 +9,8 @@
 
 	<td>{{object}}</td>
 	<td>{% for choice in page.choice_set.all %}
-    	<li>{{ choice.choice_text }}</li>
+    	<li>{{ choice.choice_text }}<a href = "{% url 'poll:update_option' choice.id %}">
+<button type="button">Update </button></a></li>
 		{% endfor %}</td>
 
 	</tr>

@@ -16,6 +16,7 @@ class QuestionTypeView(ListView):
 	template_name = "poll/main_page.html"
 	form_class = QuestionTypeForm
 
+    
 
 class QuestionBriefView(DetailView):
 
@@ -86,4 +87,11 @@ class QuestionDeleteView(DeleteView):
     model = Question
     form_class = QuestionForm
     template_name = "poll/delete_question.html"
+    success_url = reverse_lazy('poll:main_page')
+
+class OptionUpdateView(UpdateView):
+
+    model = Choice
+    template_name = "poll/create_option.html"
+    form_class = ChoiceForm
     success_url = reverse_lazy('poll:main_page')
