@@ -80,3 +80,10 @@ class QuestionUpdateView(UpdateView):
     template_name = "poll/create_question.html"
     form_class = QuestionForm
     success_url = reverse_lazy('poll:main_page')
+
+class QuestionDeleteView(DeleteView):
+
+    model = Question
+    form_class = QuestionForm
+    template_name = "poll/delete_question.html"
+    success_url = reverse_lazy('poll:main_page')
