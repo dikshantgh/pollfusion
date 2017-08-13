@@ -9,6 +9,8 @@ urlpatterns = [
     url(r"^type/$", views.TypeCreateView.as_view(), name="create_type"),
     url(r"^createquestion/(?P<pk>\d+)/$", views.QuestionCreateView.as_view(), name="create_question"),
     url(r"^createoption/(?P<pk>\d+)/$", views.OptionCreateView.as_view(), name="create_option"),
+    url(r"^updatequestion/(?P<pk>\d+)/$", views.QuestionUpdateView.as_view(), name="update_question"),
+
 
 
 

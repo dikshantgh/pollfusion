@@ -74,3 +74,9 @@ class OptionCreateView(CreateView):
         return initials
     
     
+class QuestionUpdateView(UpdateView):
+
+    model = Question
+    template_name = "poll/create_question.html"
+    form_class = QuestionForm
+    success_url = reverse_lazy('poll:main_page')

@@ -10,7 +10,10 @@
   	<tr>
 
  	{% if query.question_type == object %}
-		<td><a href = "{% url 'poll:question_detail' query.id  %}">{{query.question_text}}</a></td>
+		<td><a href = "{% url 'poll:question_detail' query.id  %}">{{query.question_text}}</a><a href = "{% url 'poll:update_question' query.id %}">
+<button type="button">Update </button></a>
+
+</td>
    
  	</tr>
 	{% endif %}
