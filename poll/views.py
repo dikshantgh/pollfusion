@@ -32,6 +32,12 @@ class QuestionDetailView(DetailView):
     model = Question
     template_name = "poll/question_detail.html"
     form_class = QuestionForm
+
+    def get_context_data(self, **kwargs):
+        context = super(QuestionDetailView, self).get_context_data(**kwargs)
+        ques_id = self.kwargs['pk']
+        context['page']=Question.objects.get(id =ques_id)
+        return context
     
 
 class TypeCreateView(CreateView):
@@ -55,5 +61,16 @@ class QuestionCreateView(CreateView):
         return initials
 
 
+class OptionCreateView(CreateView):
+
+
+    form_class = ChoiceForm
+    template_name = "poll/create_option.html"
+    success_url = reverse_lazy('poll:main_page')
+
+    def get_initial(self):
+        initials = super(OptionCreateView, self).get_initial()
+        initials['question'] = self.kwargs['pk']
+        return initials
     
     
