@@ -6,7 +6,7 @@ from poll.models import QuestionType, Question, Choice
 from django.core.urlresolvers import reverse_lazy
 from poll.forms import QuestionTypeForm, QuestionForm, ChoiceForm
 from django.shortcuts import get_object_or_404, render
-import pydoc
+from django.db.models import Max
 # Create your views here.
 
 
@@ -14,9 +14,23 @@ class QuestionTypeView(ListView):
 
     # lists all question type
     model = QuestionType
-    template_name = "poll/main_page.html"    
-    
+    template_name = "poll/main_page.html"
 
+    def get_data(self):
+        maxx = Question.objects.all().aggregate(Max('hit_ques'))
+        new = int(maxx['hit_ques__max'])
+        popular = Question.objects.get(hit_ques = new)
+        return popular
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        store = self.get_data()
+        context['popular'] = store
+        context['link'] = store.id
+        return context   
+
+
+    
 class QuestionBriefView(DetailView):
 
     model = QuestionType
@@ -163,11 +177,10 @@ class ResultDisplayView(DetailView):            # to display the final results
     def get_context_data(self, **kwargs):
             context = super(ResultDisplayView, self).get_context_data(**kwargs)
             question = self.get_data() 
-            self.get_url()
             context['page']=question
 
             try:
-                selected_choice = question.choice_set.get(id=self.request.get['choice'])
+                selected_choice = question.choice_set.get(id=self.request.GET["choice"])
                 selected_choice.votes += 1
                 selected_choice.save()
                                   
