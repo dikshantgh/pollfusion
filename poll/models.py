@@ -5,12 +5,12 @@ from datetime import datetime
 
 class QuestionType(models.Model):
 
+	# this is model for question type 
 	topic = models.CharField(max_length=200)
 
 	def __str__(self):
 
 		return self.topic
-
 
 class Question(models.Model):
 

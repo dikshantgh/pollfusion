@@ -6,21 +6,20 @@ from poll.models import QuestionType, Question, Choice
 from django.core.urlresolvers import reverse_lazy
 from poll.forms import QuestionTypeForm, QuestionForm, ChoiceForm
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseRedirect, HttpResponse
-from django.template.loader import render_to_string
-from django.urls import reverse
-
+import pydoc
 # Create your views here.
 
 
 class QuestionTypeView(ListView):
 
-
+    # lists all question type
 	model = QuestionType
 	template_name = "poll/main_page.html"
 	form_class = QuestionTypeForm
 
+
     
+
 
 class QuestionBriefView(DetailView):
 
@@ -37,7 +36,7 @@ class QuestionDetailView(DetailView):
     model = Question
     template_name = "poll/question_detail.html"
     form_class = QuestionForm
-    success_url = reverse_lazy('poll:main_page')
+    #success_url = reverse_lazy('poll:main_page')
 
     def get_context_data(self, **kwargs):
         context = super(QuestionDetailView, self).get_context_data(**kwargs)
@@ -116,22 +115,20 @@ class OptionUpdateView(UpdateView):
 
 
 
-class ResultDisplayView(DetailView):
+class ResultDisplayView(DetailView):            # to display the final results
 
-    form_class = ChoiceForm
+   # form_class = ChoiceForm
     template_name = 'poll/display_result.html'
     model = Choice
 
 
     def get_context_data(self, **kwargs):
             context = super(ResultDisplayView, self).get_context_data(**kwargs)
-
             ques_id = self.kwargs['pk']
-
             question = get_object_or_404(Question, id=ques_id)
             try:
                 selected_choice = question.choice_set.get(id=self.request.GET['choice'])
-                print(selected_choice)
+
                 context['page']=Question.objects.get(id =ques_id)
                 selected_choice.votes += 1
                 selected_choice.save()
@@ -140,4 +137,3 @@ class ResultDisplayView(DetailView):
                 context['message'] = "no choice selected "
                 return context
 
-    
