@@ -14,12 +14,7 @@ class QuestionTypeView(ListView):
 
     # lists all question type
     model = QuestionType
-    template_name = "poll/main_page.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(QuestionTypeView, self).get_context_data(**kwargs)
-        context['queryset'] = len(Question.objects.all())
-        return context
+    template_name = "poll/main_page.html"    
     
 
 class QuestionBriefView(DetailView):
@@ -27,9 +22,20 @@ class QuestionBriefView(DetailView):
     model = QuestionType
     template_name = "poll/question_list.html"
 
+    def get_data(self):
+        
+        i=0
+        query = Question.objects.all()
+        for select in query:
+            if select.question_type  == self.object :
+                i +=1
+        return i
+
     def get_context_data(self, **kwargs):
         context = super(QuestionBriefView, self).get_context_data(**kwargs)
+        context['show']=self.get_data()
         context['queryset'] = Question.objects.all()
+
         return context
 
 class QuestionDetailView(DetailView):
@@ -46,7 +52,6 @@ class QuestionDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(QuestionDetailView, self).get_context_data(**kwargs)
-        print(self.object.question)
         context['view']= self.get_data()
         return context
     

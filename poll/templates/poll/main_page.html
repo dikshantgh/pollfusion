@@ -5,7 +5,7 @@
 
 
 <table  border="5">
-<th><center>QUESTION TOPICS : {{queryset}}</center></th>
+<th><center>QUESTION TOPICS : {{object_list|length}}</center></th>
 {% for type in object_list %}
 	<tr>
 
@@ -18,3 +18,7 @@
 </table>
 </center>
 <html>
+
+
+<br>
+POPULAR QUESTIONS

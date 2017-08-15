@@ -6,18 +6,21 @@
 
 <table  border="5">
 
-<th>{{object}}Questions</th> 
+<th>{{object}}  Questions : {{show}}</th> 
 {% for query in queryset %}
 	
   	<tr>
 
  	{% if query.question_type == object %}
-		<td><a href = "{% url 'poll:question_detail' query.id  %}">{{query.question_text}}</a><a href = "{% url 'poll:update_question' query.id %}">
-<button type="button">Update </button></a>
-<a href = "{% url 'poll:delete_question' query.id %}">
-<button type="button">Delete </button></a>
 
-</td>
+ 		<td>
+
+ 		<a href = "{% url 'poll:question_detail' query.id  %}">{{query.question_text}}</a><a href = "{% url 'poll:update_question' query.id %}">
+		<button type="button">Update </button></a>
+		<a href = "{% url 'poll:delete_question' query.id %}">
+		<button type="button">Delete </button></a>
+
+		</td>
    
  	</tr>
 	{% endif %}

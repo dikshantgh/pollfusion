@@ -3,7 +3,7 @@
 
 <table  border="5">
 <th><center>QUESTION </center></th>
-<th><center>OPTIONS </center></th>
+<th><center>OPTIONS : {{object.choice_set.all|length}} </center></th>
 <form action="{% url 'poll:display_result'  object.id%}" method="GET">
 {% csrf_token %}
 
@@ -40,6 +40,6 @@
 
 </center>
 number of times this question viewed : {{view}}
-
+<br>
 
 
