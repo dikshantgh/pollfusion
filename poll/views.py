@@ -36,7 +36,7 @@ class QuestionDetailView(DetailView):
     model = Question
     template_name = "poll/question_detail.html"
     form_class = QuestionForm
-    #success_url = reverse_lazy('poll:main_page')
+    success_url = reverse_lazy('poll:main_page')
 
     def get_context_data(self, **kwargs):
         context = super(QuestionDetailView, self).get_context_data(**kwargs)
@@ -126,14 +126,16 @@ class ResultDisplayView(DetailView):            # to display the final results
             context = super(ResultDisplayView, self).get_context_data(**kwargs)
             ques_id = self.kwargs['pk']
             question = get_object_or_404(Question, id=ques_id)
+            
             try:
                 selected_choice = question.choice_set.get(id=self.request.GET['choice'])
-
-                context['page']=Question.objects.get(id =ques_id)
+                context['page']=question
                 selected_choice.votes += 1
                 selected_choice.save()
                 return context
             except Exception :
+
+                context['page']=question
                 context['message'] = "no choice selected "
                 return context
 
