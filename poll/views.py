@@ -13,19 +13,20 @@ import pydoc
 class QuestionTypeView(ListView):
 
     # lists all question type
-	model = QuestionType
-	template_name = "poll/main_page.html"
-	form_class = QuestionTypeForm
+    model = QuestionType
+    template_name = "poll/main_page.html"
 
-
+    def get_context_data(self, **kwargs):
+        context = super(QuestionTypeView, self).get_context_data(**kwargs)
+        context['queryset'] = len(Question.objects.all())
+        return context
     
-
 
 class QuestionBriefView(DetailView):
 
     model = QuestionType
     template_name = "poll/question_list.html"
-    form_class = QuestionForm
+
     def get_context_data(self, **kwargs):
         context = super(QuestionBriefView, self).get_context_data(**kwargs)
         context['queryset'] = Question.objects.all()
@@ -35,19 +36,20 @@ class QuestionDetailView(DetailView):
 
     model = Question
     template_name = "poll/question_detail.html"
-    form_class = QuestionForm
-    success_url = reverse_lazy('poll:main_page')
 
-    def get_context_data(self, **kwargs):
-        context = super(QuestionDetailView, self).get_context_data(**kwargs)
+    def get_data(self, **kwargs):
         ques_id = self.kwargs['pk']
         page =  Question.objects.get(id =ques_id)
         page.hit_ques = page.hit_ques + 1
-        context['view'] = page.hit_ques
         page.save()
+        return page.hit_ques
+
+    def get_context_data(self, **kwargs):
+        context = super(QuestionDetailView, self).get_context_data(**kwargs)
+        print(self.object.question)
+        context['view']= self.get_data()
         return context
     
-
     
 
 class TypeCreateView(CreateView):
@@ -63,25 +65,36 @@ class QuestionCreateView(CreateView):
 
     form_class = QuestionForm
     template_name = "poll/create_question.html"
-    success_url = reverse_lazy('poll:main_page')
 
     def get_initial(self):
+
         initials = super(QuestionCreateView, self).get_initial()
         initials['question_type'] = self.kwargs['pk']
         return initials
 
+    def get_success_url(self,**kwargs):
+        
+        post = self.object.question_type # it prints out the clicked question type or the new created question
+        #print(self.object.id) # printts the id of question
+        return reverse_lazy('poll:question_list', args = (post.id,))
+        
 
 class OptionCreateView(CreateView):
 
 
     form_class = ChoiceForm
     template_name = "poll/create_option.html"
-    success_url = reverse_lazy('poll:main_page')
 
     def get_initial(self):
         initials = super(OptionCreateView, self).get_initial()
         initials['question'] = self.kwargs['pk']
         return initials
+
+    def get_success_url(self,**kwargs):
+
+        post = self.object.question 
+        return reverse_lazy('poll:question_detail', args = (post.id,))
+    
     
     
 class QuestionUpdateView(UpdateView):
@@ -89,21 +102,33 @@ class QuestionUpdateView(UpdateView):
     model = Question
     template_name = "poll/create_question.html"
     form_class = QuestionForm
-    success_url = reverse_lazy('poll:main_page')
+
+    def get_success_url(self,**kwargs):
+
+        post = self.object.question_type # it prints out the clicked question type or the new created question
+        #print(self.object.id) # printts the id of question
+        return reverse_lazy('poll:question_list', args = (post.id,))
 
 class QuestionDeleteView(DeleteView):
 
     model = Question
-    form_class = QuestionForm
     template_name = "poll/delete_question.html"
-    success_url = reverse_lazy('poll:main_page')
+
+    def get_success_url(self,**kwargs):
+
+        post = self.object.question_type # it prints out the clicked question type or the new created question
+        #print(self.object.id) # printts the id of question
+        return reverse_lazy('poll:question_list', args = (post.id,))
 
 class OptionDeleteView(DeleteView):
 
     model = Choice
-    form_class = ChoiceForm
     template_name = "poll/delete_option.html"
-    success_url = reverse_lazy('poll:main_page')
+
+    def get_success_url(self,**kwargs):
+        
+        post = self.object.question
+        return reverse_lazy('poll:question_detail', args = (post.id,))
 
 
 class OptionUpdateView(UpdateView):
@@ -111,31 +136,49 @@ class OptionUpdateView(UpdateView):
     model = Choice
     template_name = "poll/create_option.html"
     form_class = ChoiceForm
-    success_url = reverse_lazy('poll:main_page')
+
+    def get_success_url(self,**kwargs):
+
+        post = self.object.question 
+        return reverse_lazy('poll:question_detail', args = (post.id,))
 
 
 
 class ResultDisplayView(DetailView):            # to display the final results
 
-   # form_class = ChoiceForm
     template_name = 'poll/display_result.html'
     model = Choice
 
+    def get_data (self, **kwargs):
+        
+        ques_id = self.kwargs['pk']
+        question = get_object_or_404(Question, id=ques_id)
+        return question
 
     def get_context_data(self, **kwargs):
             context = super(ResultDisplayView, self).get_context_data(**kwargs)
-            ques_id = self.kwargs['pk']
-            question = get_object_or_404(Question, id=ques_id)
-            
+            question = self.get_data() 
+            self.get_url()
+            context['page']=question
+
             try:
-                selected_choice = question.choice_set.get(id=self.request.GET['choice'])
-                context['page']=question
+                selected_choice = question.choice_set.get(id=self.request.get['choice'])
                 selected_choice.votes += 1
                 selected_choice.save()
-                return context
-            except Exception :
+                                  
+            except Exception as ex :
+                context['message']="not selected "
+                
 
-                context['page']=question
-                context['message'] = "no choice selected "
-                return context
+            return context
 
+
+class TypeDeleteView(DeleteView):
+
+    model = QuestionType
+    template_name = "poll/delete_type.html"
+
+    def get_success_url(self,**kwargs):
+        
+        post = self.object.topic
+        return reverse_lazy('poll:main_page')

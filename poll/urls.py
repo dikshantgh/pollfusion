@@ -14,6 +14,7 @@ urlpatterns = [
     url(r"^updateoption/(?P<pk>\d+)/$", views.OptionUpdateView.as_view(), name="update_option"),
     url(r"^result/(?P<pk>\d+)$", views.ResultDisplayView.as_view(), name="display_result"),
     url(r"^deletechoice/(?P<pk>\d+)$", views.OptionDeleteView.as_view(), name="delete_option"),
+    url(r"^deletetype/(?P<pk>\d+)$", views.TypeDeleteView.as_view(), name="delete_type"),
 
 
 
