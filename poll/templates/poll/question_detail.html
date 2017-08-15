@@ -4,23 +4,42 @@
 <table  border="5">
 <th><center>QUESTION </center></th>
 <th><center>OPTIONS </center></th>
+<form action="{% url 'poll:display_result'  object.id%}" method="GET">
+{% csrf_token %}
 
 	<tr>
 
 	<td>{{object}}</td>
-	<td>{% for choice in page.choice_set.all %}
-    	<li>{{ choice.choice_text }}<a href = "{% url 'poll:update_option' choice.id %}">
-<button type="button">Update </button></a></li>
+	<td>{% for choice in object.choice_set.all %}
+    	
+
+	<input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}" />
+    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }} <a href = "{% url 'poll:update_option' choice.id %}">
+	<button type="button">Update </button></a>
+
+	<a href = "{% url 'poll:delete_option' choice.id %}">
+	<button type="button">Delete </button></a>
+
+	  </label><br>
+    
+
 		{% endfor %}</td>
+
 
 	</tr>
 
+<input type="submit" value="Vote" />
+</form>
 
 </table>
 
 
 <center><li><a href = "{% url 'poll:create_option' object.id %}">Add new option for this question</a></center>
 
-</center>
 
+
+</center>
 number of times this question viewed : {{view}}
+
+
+

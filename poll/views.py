@@ -1,10 +1,14 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from poll.models import QuestionType, Question, Choice
 from django.core.urlresolvers import reverse_lazy
 from poll.forms import QuestionTypeForm, QuestionForm, ChoiceForm
+from django.shortcuts import get_object_or_404, render
+from django.http import HttpResponseRedirect, HttpResponse
+from django.template.loader import render_to_string
+from django.urls import reverse
 
 # Create your views here.
 
@@ -33,11 +37,11 @@ class QuestionDetailView(DetailView):
     model = Question
     template_name = "poll/question_detail.html"
     form_class = QuestionForm
+    success_url = reverse_lazy('poll:main_page')
 
     def get_context_data(self, **kwargs):
         context = super(QuestionDetailView, self).get_context_data(**kwargs)
         ques_id = self.kwargs['pk']
-        context['page']=Question.objects.get(id =ques_id)
         page =  Question.objects.get(id =ques_id)
         page.hit_ques = page.hit_ques + 1
         context['view'] = page.hit_ques
@@ -95,9 +99,64 @@ class QuestionDeleteView(DeleteView):
     template_name = "poll/delete_question.html"
     success_url = reverse_lazy('poll:main_page')
 
+class OptionDeleteView(DeleteView):
+
+    model = Choice
+    form_class = ChoiceForm
+    template_name = "poll/delete_option.html"
+    success_url = reverse_lazy('poll:main_page')
+
+
 class OptionUpdateView(UpdateView):
 
     model = Choice
     template_name = "poll/create_option.html"
     form_class = ChoiceForm
     success_url = reverse_lazy('poll:main_page')
+
+
+
+class ResultDisplayView(DetailView):
+
+    form_class = ChoiceForm
+    template_name = 'poll/display_result.html'
+    model = Choice
+
+
+    def get_context_data(self, **kwargs):
+            context = super(ResultDisplayView, self).get_context_data(**kwargs)
+
+            ques_id = self.kwargs['pk']
+
+            question = get_object_or_404(Question, id=ques_id)
+            try:
+                selected_choice = question.choice_set.get(id=self.request.GET['choice'])
+                print(selected_choice)
+                context['page']=Question.objects.get(id =ques_id)
+                selected_choice.votes += 1
+                selected_choice.save()
+                return context
+            except Exception :
+                context['message'] = "no choice selected "
+                return context
+
+           # context['votes'] = selected_votes
+            
+    
+    
+# question = get_object_or_404(Question, pk=question_id)
+#     try:
+#         selected_choice = question.choice_set.get(pk=request.POST['choice'])
+#     except (KeyError, Choice.DoesNotExist):
+#         # Redisplay the question voting form.
+#         return render(request, 'polls/detail.html', {
+#             'question': question,
+#             'error_message': "You didn't select a choice.",
+#         })
+#     else:
+#         selected_choice.votes += 1
+#         selected_choice.save()
+#         # Always return an HttpResponseRedirect after successfully dealing
+#         # with POST data. This prevents data from being posted twice if a
+#         # user hits the Back button.
+#         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))

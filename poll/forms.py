@@ -12,10 +12,13 @@ class QuestionTypeForm(forms.ModelForm):
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
+        exclude =['hit_ques']
         fields = '__all__'
 
 
 class ChoiceForm(forms.ModelForm):
     class Meta:
         model = Choice
+        exclude =['votes']
+
         fields = '__all__'
