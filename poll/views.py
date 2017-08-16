@@ -6,7 +6,7 @@ from poll.models import QuestionType, Question, Choice
 from django.core.urlresolvers import reverse_lazy
 from poll.forms import QuestionTypeForm, QuestionForm, ChoiceForm
 from django.shortcuts import get_object_or_404, render
-from django.db.models import Max
+from django.db.models import Max, Sum
 # Create your views here.
 
 
@@ -18,8 +18,7 @@ class QuestionTypeView(ListView):
 
     def get_data(self):
         maxx = Question.objects.all().aggregate(Max('hit_ques'))
-        new = int(maxx['hit_ques__max'])
-        popular = Question.objects.get(hit_ques = new)
+        popular = Question.objects.get(hit_ques = int(maxx['hit_ques__max']))
         return popular
 
     def get_context_data(self, **kwargs):
@@ -55,12 +54,10 @@ class QuestionDetailView(DetailView):
 
 
     def get_total (self):
-        question = self.object
-        total=0
-        query = question.choice_set.all()
-        for l in query:
-            total=l.votes+total
-        return total
+
+        query = self.object.choice_set.all()        
+        total = query.aggregate(Sum('votes'))
+        return total['votes__sum']
 
     def get_data(self, **kwargs):
         ques_id = self.kwargs['pk']
@@ -75,7 +72,7 @@ class QuestionDetailView(DetailView):
         context['view']= self.get_data()
         context['total']=self.get_total()
         return context
-    
+   
     
 
 class TypeCreateView(CreateView):

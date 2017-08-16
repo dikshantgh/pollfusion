@@ -28,18 +28,4 @@ class ChoiceForm(forms.ModelForm):
         fields = '__all__'
         # widgets = {'choice_text': forms.RadioSelect()}
 
-        # def __init__(self,*args,**kwargs):
-        #     super(ChoiceForm,self).__init__(*args,**kwargs)
-        #     self.error_messages['required']
-        # def __init__(self, *args, **kwargs):
-        #     super(ChoiceForm, self).__init__(*args, **kwargs)
-        #     for k, field in self.fields.items():
-        #         if 'fill' in field.error_messages:
-        #             field.error_messages['fill'] = 'You have to fill this.'
-
-
-    # def __init__(self,*args,**kwargs):
-    #     super(ChoiceForm,self).__init__(*args,**kwargs)
-    #     self.fields['choice_text'].error_messages = {'required': 'FAS:DJFASKL:DJF'}
         
-    #     # 
