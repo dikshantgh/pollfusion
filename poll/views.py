@@ -36,12 +36,9 @@ class QuestionBriefView(DetailView):
 
     def get_data(self):
         
-        i=0
-        query = Question.objects.all()
-        for select in query:
-            if select.question_type  == self.object :
-                i +=1
-        return i
+        ques = Question.objects.filter(question_type__topic=self.object.topic).count()
+        return ques
+        
 
     def get_context_data(self, **kwargs):
         context = super(QuestionBriefView, self).get_context_data(**kwargs)
