@@ -32,9 +32,10 @@
 </form>
 
 </table>
-
-
-<center><li><a href = "{% url 'poll:create_option' object.id %}">Add new option for this question</a></center>
+<br>
+Total votes for this question till now : {{total}}
+<br>
+<center><a href = "{% url 'poll:create_option' object.id %}">Add new option for this question</a></center>
 
 
 

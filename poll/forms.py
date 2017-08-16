@@ -26,7 +26,7 @@ class ChoiceForm(forms.ModelForm):
         model = Choice
         exclude =['votes']
         fields = '__all__'
-        #widgets = {'choice_text': forms.CheckboxInput()}
+        # widgets = {'choice_text': forms.RadioSelect()}
 
         # def __init__(self,*args,**kwargs):
         #     super(ChoiceForm,self).__init__(*args,**kwargs)

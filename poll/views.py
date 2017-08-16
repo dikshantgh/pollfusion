@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,HttpResponse
 from django.http import HttpResponse
 from django.views.generic import ListView, DetailView, TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -24,13 +24,11 @@ class QuestionTypeView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        store = self.get_data()
-        context['popular'] = store
-        context['link'] = store.id
+        context['popular'] = self.get_data()
         return context   
 
 
-    
+        
 class QuestionBriefView(DetailView):
 
     model = QuestionType
@@ -49,24 +47,36 @@ class QuestionBriefView(DetailView):
         context = super(QuestionBriefView, self).get_context_data(**kwargs)
         context['show']=self.get_data()
         context['queryset'] = Question.objects.all()
-
         return context
+
+
 
 class QuestionDetailView(DetailView):
 
     model = Question
     template_name = "poll/question_detail.html"
 
+
+    def get_total (self):
+        question = self.object
+        total=0
+        query = question.choice_set.all()
+        for l in query:
+            total=l.votes+total
+        return total
+
     def get_data(self, **kwargs):
         ques_id = self.kwargs['pk']
         page =  Question.objects.get(id =ques_id)
         page.hit_ques = page.hit_ques + 1
         page.save()
+
         return page.hit_ques
 
     def get_context_data(self, **kwargs):
         context = super(QuestionDetailView, self).get_context_data(**kwargs)
         context['view']= self.get_data()
+        context['total']=self.get_total()
         return context
     
     
@@ -77,6 +87,7 @@ class TypeCreateView(CreateView):
     form_class = QuestionTypeForm
     template_name = "poll/create_type.html"
     success_url = reverse_lazy('poll:main_page')
+
 
 
 class QuestionCreateView(CreateView):
@@ -96,6 +107,7 @@ class QuestionCreateView(CreateView):
         post = self.object.question_type # it prints out the clicked question type or the new created question
         #print(self.object.id) # printts the id of question
         return reverse_lazy('poll:question_list', args = (post.id,))
+
         
 
 class OptionCreateView(CreateView):
@@ -128,6 +140,8 @@ class QuestionUpdateView(UpdateView):
         #print(self.object.id) # printts the id of question
         return reverse_lazy('poll:question_list', args = (post.id,))
 
+
+
 class QuestionDeleteView(DeleteView):
 
     model = Question
@@ -136,8 +150,9 @@ class QuestionDeleteView(DeleteView):
     def get_success_url(self,**kwargs):
 
         post = self.object.question_type # it prints out the clicked question type or the new created question
-        #print(self.object.id) # printts the id of question
         return reverse_lazy('poll:question_list', args = (post.id,))
+
+
 
 class OptionDeleteView(DeleteView):
 
@@ -148,6 +163,8 @@ class OptionDeleteView(DeleteView):
         
         post = self.object.question
         return reverse_lazy('poll:question_detail', args = (post.id,))
+
+
 
 
 class OptionUpdateView(UpdateView):
@@ -185,10 +202,10 @@ class ResultDisplayView(DetailView):            # to display the final results
                 selected_choice.save()
                                   
             except Exception as ex :
-                context['message']="not selected "
+                context['message']="not selected "+str(ex)
                 
-
             return context
+
 
 
 class TypeDeleteView(DeleteView):

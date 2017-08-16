@@ -1,17 +1,33 @@
+
 <center><a href ="{% url 'poll:question_detail' page.id %}">Vote Again!!</a></center>
 
 
-{{page}}
-
-{% for choice in page.choice_set.all %}
-
-  <li>
-
-        {{choice.choice_text}}={{choice.votes }}
-
-
-    </li>
-{% endfor %}
+{% if message == None %}
 
 <br>
-{{message}} {{ex}} 
+<!--Thank you for the votes . Now you will be auto redirected to main page
+<meta http-equiv="refresh" content="8;url=http://localhost:8000" >
+<br> -->
+<table border = "5">
+<strong>{{page}}</strong>
+<th> Options </th>
+<th>Votes</th>
+
+{% for choice in page.choice_set.all %}
+<tr>
+  
+
+       <td width = "200"> {{choice.choice_text}}</td>
+       <td>{{choice.votes}}</td>
+
+</tr>
+    
+{% endfor %}
+
+</table>
+{% endif %}
+
+
+
+{{message}}
+
