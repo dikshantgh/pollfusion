@@ -1,0 +1,34 @@
+
+
+
+<center><a href ="{% url  'poll:main_page' %}">Home</a></center>
+
+
+<html>
+ <h3>Contact Fomr:</h3>
+<form action=''  method='POST'>
+{% csrf_token %}
+{% for field in form %}
+  <div>
+     
+  <label>{{ field.label_tag }}</label>
+  </div>
+  <div>
+      {{ field }}
+
+  </div>
+
+{% endfor %}
+
+
+    <div>
+      <button type="submit">Save</button>
+    </div>
+  </div>
+</form>
+</html>
+
+Last Contact submitted by user details:<br>
+
+{{ request.session.name}}
+
