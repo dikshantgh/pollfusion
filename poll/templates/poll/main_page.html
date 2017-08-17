@@ -5,11 +5,16 @@
 
 
 <table  border="5">
-<th><center>QUESTION TOPICS : {{object_list|length}}</center></th>
-{% for type in object_list %}
+<th><center>QUESTION TOPICS : {{type_list|length}}</center></th>
+{% for type in type_list %}
 	<tr>
 
-	<td><a href = "{% url 'poll:question_list' type.id  %}">{{type.topic}}</a></td>
+	<td><a href = "{% url 'poll:question_list' type.id  %}">{{type.topic}}</a>
+	<a href = "{% url 'poll:delete_type' type.id %}">
+		<button type="button">Delete </button></a>
+
+
+	</td>
 
 	</tr>
 {%  endfor %}
@@ -31,7 +36,9 @@
 <td>
 
 <a href = "{% url 'poll:question_detail' popular.id  %}">{{popular}}</a>
-
 </td>
 </tr>
 </table>
+Political Type Question Excluded
+
+<a href = "{% url 'poll:contact_views' %}">click here to fill contact</a>

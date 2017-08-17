@@ -1,10 +1,10 @@
 from django.shortcuts import render,HttpResponse
 from django.http import HttpResponse
-from django.views.generic import ListView, DetailView, TemplateView
+from django.views.generic import ListView, DetailView, TemplateView, FormView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from poll.models import QuestionType, Question, Choice
+from poll.models import QuestionType, Question, Choice, Contact
 from django.core.urlresolvers import reverse_lazy
-from poll.forms import QuestionTypeForm, QuestionForm, ChoiceForm
+from poll.forms import QuestionTypeForm, QuestionForm, ChoiceForm, ContactForm
 from django.shortcuts import get_object_or_404, render
 from django.db.models import Max, Sum
 # Create your views here.
@@ -15,34 +15,44 @@ class QuestionTypeView(ListView):
     # lists all question type
     model = QuestionType
     template_name = "poll/main_page.html"
+    context_object_name ="type_list"
 
-    def get_data(self):
-        maxx = Question.objects.all().aggregate(Max('hit_ques'))
-        popular = Question.objects.get(hit_ques = int(maxx['hit_ques__max']))
-        return popular
+    
+    def get_popular(self):
+
+        political = QuestionType.objects.get(topic = "Political")
+        maxx = Question.objects.all().exclude(question_type=political).aggregate(Max('hit_ques'))
+        return Question.objects.get(hit_ques = int(maxx['hit_ques__max']))
 
     def get_context_data(self, **kwargs):
+
         context = super().get_context_data(**kwargs)
-        context['popular'] = self.get_data()
+        context['popular'] = self.get_popular()
         return context   
 
 
         
-class QuestionBriefView(DetailView):
+class QuestionBriefView(ListView):
 
-    model = QuestionType
+    model = Question
     template_name = "poll/question_list.html"
 
+
+    def get_queryset(self,**kwargs):
+        topic_name = get_object_or_404(QuestionType, id=self.kwargs['pk'])
+        return Question.objects.filter(question_type=topic_name)
+    
     def get_data(self):
-        
-        ques = Question.objects.filter(question_type__topic=self.object.topic).count()
+        topic_name = get_object_or_404(QuestionType, id=self.kwargs['pk'])
+        ques = Question.objects.filter(question_type__topic=topic_name).count()
         return ques
         
 
     def get_context_data(self, **kwargs):
+       
         context = super(QuestionBriefView, self).get_context_data(**kwargs)
+        context['typeid']=self.kwargs['pk']
         context['show']=self.get_data()
-        context['queryset'] = Question.objects.all()
         return context
 
 
@@ -141,9 +151,11 @@ class QuestionDeleteView(DeleteView):
     model = Question
     template_name = "poll/delete_question.html"
 
+
     def get_success_url(self,**kwargs):
 
         post = self.object.question_type # it prints out the clicked question type or the new created question
+        #self.soft_delete()
         return reverse_lazy('poll:question_list', args = (post.id,))
 
 
@@ -152,10 +164,18 @@ class OptionDeleteView(DeleteView):
 
     model = Choice
     template_name = "poll/delete_option.html"
+    #alive = True
+
+    #def __init__(self,**kwargs):
+    # Bulk delete bypasses individual objects' delete methods.
+       # Choice.objects.get(id =self.kwargs['pk']).delete(alive=False)
+     #   print(self.object.question)
 
     def get_success_url(self,**kwargs):
-        
         post = self.object.question
+        print(post)
+        pp=(self.object.id)
+        Choice.objects.get(id =pp).delete(alive=False)
         return reverse_lazy('poll:question_detail', args = (post.id,))
 
 
@@ -186,6 +206,7 @@ class ResultDisplayView(DetailView):            # to display the final results
         return question
 
     def get_context_data(self, **kwargs):
+            print(self.object)
             context = super(ResultDisplayView, self).get_context_data(**kwargs)
             question = self.get_data() 
             context['page']=question
@@ -211,3 +232,23 @@ class TypeDeleteView(DeleteView):
         
         post = self.object.topic
         return reverse_lazy('poll:main_page')
+
+
+
+class ContactAddView(CreateView):
+
+    
+    model = Contact
+    template_name = "poll/contact.html"
+    form_class = ContactForm
+    success_url = reverse_lazy('poll:contact_views')
+
+    def form_valid(self, form):
+        self.request.session['name'] = form.cleaned_data
+        self.request.session['address'] = form.cleaned_data
+        return super(ContactAddView, self).form_valid(form)
+
+class ResultView(TemplateView):
+    template_name = "contact.html"
+
+ 

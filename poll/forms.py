@@ -1,5 +1,5 @@
 from django import forms
-from poll.models import Question, QuestionType, Choice
+from poll.models import Question, QuestionType, Choice,Contact
 
 
 class QuestionTypeForm(forms.ModelForm):
@@ -22,6 +22,7 @@ class ChoiceForm(forms.ModelForm):
     #         'required': 'my custom error message',
     #     }
     class Meta:
+        
 
         model = Choice
         exclude =['votes']
@@ -29,3 +30,10 @@ class ChoiceForm(forms.ModelForm):
         # widgets = {'choice_text': forms.RadioSelect()}
 
         
+class ContactForm(forms.ModelForm):
+   
+
+       # name = forms.CharField(help_text="nameplzz")
+    class Meta:
+        model = Contact
+        fields = '__all__'
