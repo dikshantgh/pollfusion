@@ -250,5 +250,109 @@ class ContactAddView(CreateView):
 
 class ResultView(TemplateView):
     template_name = "contact.html"
+    
+    
+    
+    
+# from django.http import HttpResponseRedirect
+# from django.shortcuts import render, get_object_or_404
+
+# # Create your views here.
+# from django.urls import reverse
+# from django.utils.datastructures import MultiValueDictKeyError
+# from django.views.generic import TemplateView, ListView, DetailView
+
+# from main.models import Question, Choice
+
+
+# class HomePageView(TemplateView):
+#     template_name = 'main/homepage.html'
+
+
+# class ListPageView(ListView):
+#     model = Question
+#     template_name = 'main/list_questions.html'
+
+
+# class DetailPageView(DetailView):
+#     model = Question
+#     template_name = 'main/detail_questions.html'
+
+
+# class ResultPageView(DetailView):
+#     model = Question
+#     template_name = 'main/result.html'
+
+#     # always call POST method if the action is post or GET if the method is GET
+
+#     # def pos(self, request, *args, **kwargs):
+#     #     print(self.kwargs)
+
+#     # def get_context_data(self, **kwargs):
+#     #     context = super().get_context_data(**kwargs)
+#     #     selected_choice = self.request.GET['radio_choice']
+#     #     choice_number = get_object_or_404(Choice, pk=selected_choice)
+#     #     choice_number.vote += 1
+#     #     choice_number.save()
+#     #     return context
+
+#     def dispatch(self, request, *args, **kwargs):
+#         # print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+#         obj = self.get_object()
+#         # print('#########################')
+#         try:
+#             # choice_selected = obj.choices.get(pk=self.request.GET['radio_choice'])
+#             choice_selected = get_object_or_404(Choice, pk=self.request.GET['radio_choice'])
+#             # print('-------------------')
+#         except KeyError:
+#             #print('cool', obj.pk)
+#             return HttpResponseRedirect(reverse('main:detail_questions', args=[obj.pk, ]))
+#         except AttributeError:
+#             return HttpResponseRedirect(reverse('main:detail_questions', args=[obj.pk, ]))
+#         else:
+#             print(choice_selected)
+#             choice_selected.vote += 1
+#             choice_selected.save()
+#             return super().dispatch(request, *args, **kwargs)
+
+
+# # #
+# # def homepage(request):
+# #     context = {'name': 'dikshant', 'age': 25}
+# #     return render(request, 'main/homepage.html', context)
+# #
+# #
+# # def list_questions(request):
+# #     context = {'context': Question.objects.all()}
+# #     return render(request, 'main/list_questions.html', context)
+# #
+# #
+# # def detail_questions(request, question_pk):
+# #     context = {'context': get_object_or_404(Question, pk=question_pk), }
+# #     return render(request, 'main/detail_questions.html', context)
+# #
+# #
+# # def vote_choice(request, question_pk):
+# #     context = {'context': get_object_or_404(Question, pk=question_pk), }
+# #     try:
+# #         obj = get_object_or_404(Choice, pk=request.POST['radio_choice'])
+# #         print(request.POST['radio_choice'])
+# #
+# #     except (KeyError, Choice.DoesNotExist):
+# #         context['message'] = "You have not selected any choice"
+# #         return render(request, 'main/homepage.html', context)
+# #
+# #     else:
+# #         print(obj)
+# #         obj.vote += 1
+# #         message = "Your vote is counted successfully"
+# #         obj.save()
+# #         return HttpResponseRedirect(reverse('main:result', args=[context['context'].pk], ))
+# #
+# #
+# # def result(request, question_pk):
+# #     context = {'ques':get_object_or_404(Question, pk= question_pk) }
+# #     return render(request, 'main/result.html', context)
+
 
  
